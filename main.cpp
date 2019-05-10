@@ -10,7 +10,7 @@
 #include <fstream>
 #include <string.h>
 using namespace std;
-
+int ch = 256;
 
 
 int rehash(int tHash, string text, int l, int pLength, int z, int prime)
@@ -58,7 +58,7 @@ void rabinkarpsearch(string pattern){
     ifstream stringfile ("stringfile.txt");
     int timeCount = 0;
     int linenumber = 0;
-	int ch = 256;
+	
     while(getline(stringfile, text)){
         linenumber++;
     int s=0;
