@@ -1,0 +1,1 @@
+In order to check the resemblance between these two words an hashing function is used.
