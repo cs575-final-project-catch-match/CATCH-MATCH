@@ -11,8 +11,25 @@
 #include <string.h>
 using namespace std;
 
-#define ch 256
 
+
+int rehash(int tHash, string text, int l, int pLength, int z, int prime)
+{   
+            int f= tHash - text[l]*z;
+            
+            int g= text[l+pLength];
+            
+            tHash = (ch*(f) + g);
+            
+            tHash=tHash%prime;
+          
+            if (tHash <= -1)
+				
+                tHash = (tHash + prime);
+                
+            return tHash;
+    
+}
 bool setprime(int rem)
 {
     
@@ -40,13 +57,16 @@ void rabinkarpsearch(string pattern){
     ofstream rabinkarpoutputfile ("rabinkarp.txt");
     ifstream stringfile ("stringfile.txt");
     int timeCount = 0;
+    int linenumber = 0;
+	int ch = 256;
     while(getline(stringfile, text)){
+        linenumber++;
     int s=0;
     int prime=0;
     cout<<"\n\n------------RABIN KARP RESULTS FOR PATTERN "<<pattern<<"----------\n\n"<<endl;
     
     while(true){
-        
+        timeCount++;
         s =  rand() % 100 + 1985;
         if(setprime(s))
         {
@@ -56,26 +76,24 @@ void rabinkarpsearch(string pattern){
     }
     
     int pLength = pattern.length();
-    
-    //int patlen = 0;
+    int patlen = 0;
     
     int tLength = text.length();
     
     int j=0;
-    
-    int pHash = 0; // hash value for pattern
-    int tHash = 0; // hash value for txt
-    
-    //int freq=0;
+    int pHash = 0; // pattern hash value
+    int tHash = 0; // text hash value
+    int freq=0;
     
     
     
-    int z = 1;
+    int z = 1; // hash variable
     
     for (int i = 1; i <= pLength - 1; i++)
     {
         z = (ch * z) % prime;
         timeCount++;
+        
     }
     
     for (int j = 0; j < pLength; j++)
@@ -89,56 +107,48 @@ void rabinkarpsearch(string pattern){
         tHash = (ch * tHash + text[j]) % prime;
         timeCount++;
     }
-    //txtHash=t;
-    //cout<<t<<endl;
-    //cout<<p<<endl;
-    //search(pat, text, q, patHash,txtHash,patlen);
     
         int offset = tLength - pLength;
     
         int l=0;
     
+        
         while (l<=offset){
-        // for (i = 0; i <= tLength - pLength; i++)
-        
-        // Check the hash values of current window of text
-        // and pattern. If the hash values match then only
-        // check for characters on by one
-        
+
+         // Check if the hash values of pattern and current text window matches
+ 
             if ( pHash == tHash )
         
             {
-            /* Check for characters one by one */
-            for ( j = 0; j < pLength; j++)
+            //if the hash values of both pattern and text match
+            // We will check every character of the pattern with the current window of text input
+       
+               for ( j = 0; j < pLength; j++)
             {
                 timeCount++;
+				
                 if (text[l+j] != pattern[j])
                     break;
             }
             
-            // if p == t and pattern[0...pLength-1] = text[i, i+1, ...i+pLength-1]
             if (j == pLength)
-                cout<<"Pattern found at index "<< l+pLength<<" and pattern matched is '"<<pattern<<"'\n"<<endl;
+                cout<<"Pattern found at index "<<l+pLength<<" at line "<<linenumber<<" and pattern matched is '"<<pattern<<"'\n"<<endl;
             
-                rabinkarpoutputfile<<"Pattern found at index "<< l+pLength<<" and pattern matched is '"<<pattern<<"'\n"<<endl;
+                rabinkarpoutputfile<<"Pattern found at index "<< l+pLength<<" at line "<<linenumber<<" and pattern matched is '"<<pattern<<"'\n"<<endl;
                 }
                 
-                // Calculate hash value for next window of text: Remove
-                // leading digit, add trailing digit
-                if ( l < tLength-pLength )
-            {
-                
-                tHash = (ch*(tHash - text[l]*z) + text[l+pLength])%prime;
-                // We might get negative value of t, converting it
-                // to positive
-                
-                if (tHash < 0)
-                    tHash = (tHash + prime);
-            }
+                //moving character by character forward in the text input
+				
+             if ( l < offset )
+        {
+			// we rehash the values if the pattern is not found
+			
+            tHash = rehash(tHash,text,l,pLength,z,prime);
+        }
             l++;
         }
     }
-    //cout<<timeCount<<endl;
+    cout<<"Total time taken is "<<timeCount<<"\n"<<endl;
 }
 
 void lcsssearch(string line2){ //By Himanshu Ahuja
